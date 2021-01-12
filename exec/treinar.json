@@ -1,0 +1,6 @@
+{
+  "mensagens": "../../historico.json",
+  "ia": {
+    "nomeModelo": "Walkker"
+  }
+}
