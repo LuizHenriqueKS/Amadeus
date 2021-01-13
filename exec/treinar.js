@@ -14,7 +14,10 @@ try {
   const arquivoMensagens = new LeitorArquivosMensagens().ler(caminhoArquivoMensagens);
   const ia = new IA1(configuracoes.ia);
 
-  ia.tentarCarregarModelo();
+  if (!ia.tentarCarregarModelo()) {
+    ia.criarNovoModelo(arquivoMensagens);
+  }
+
   ia.salvarModeloAutomaticamente = true;
   ia.treinarSemParar(arquivoMensagens);
 } catch (ex) {

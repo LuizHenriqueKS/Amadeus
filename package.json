@@ -22,8 +22,5 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1"
-  },
-  "dependencies": {
-    "md5-file": "^5.0.0"
   }
 }
