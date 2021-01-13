@@ -1,10 +1,10 @@
-const PropriedadeNaoEncontrada = require('../exception/PropriedadeNaoEncontrada');
+const PropriedadeNaoEncontradaException = require('../exception/PropriedadeNaoEncontradaException');
 
 module.exports = function validarConfiguracoesTreinamento(configuracoes) {
   if (!configuracoes.mensagens) {
-    throw new PropriedadeNaoEncontrada('mensagens');
+    throw new PropriedadeNaoEncontradaException('mensagens');
   }
   if (!configuracoes.ia) {
-    throw new PropriedadeNaoEncontrada('ia');
+    throw new PropriedadeNaoEncontradaException('ia');
   }
 };
