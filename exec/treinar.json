@@ -1,7 +1,8 @@
 {
   "mensagens": "../../historico.json",
-  "id_usuario": 4396467379,
+  "idUsuario": 4396467379,
   "qtdeMaxMensagensEntrada": 10,
+  "valorMaximoParaUmCaracter": 65027,
   "ia": {
     "nomeModelo": "Walkker"
   }

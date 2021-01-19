@@ -11,7 +11,10 @@ try {
   validarConfiguracoesTreinamento(configuracoes);
 
   const caminhoArquivoMensagens = path.join(__dirname, configuracoes.mensagens);
-  const arquivoMensagens = new LeitorArquivosMensagens().ler(caminhoArquivoMensagens);
+  const arquivoMensagens = new LeitorArquivosMensagens(configuracoes).ler(caminhoArquivoMensagens);
+
+  console.log('Quantidade de grupo de mensagens carregados:', arquivoMensagens.grupoMensagens.length);
+
   const ia = new IA1(configuracoes.ia);
 
   if (!ia.tentarCarregarModelo()) {
