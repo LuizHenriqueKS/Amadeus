@@ -1,0 +1,10 @@
+{
+  "mensagens": "./data/mensagens/MensagensAmadeus.json",
+  "idUsuario": 1,
+  "qtdeMaxMensagensEntrada": 2,
+  "ia": {
+    "nomeModelo": "ModeloAmadeus",
+    "acelerador": true,
+    "epocas": 100
+  }
+}

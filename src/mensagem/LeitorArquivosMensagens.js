@@ -27,23 +27,46 @@ class LeitorArquivosMensagens {
     const mapMensagensPorId = {};
     const grupoMensagens = [];
     let mensagensEntrada = [];
+    let ultimoMensagemAdicionado = null;
     for (const mensagemCrua of json.messages) {
       const mensagem = this.tratarMensagemCrua(mensagemCrua);
       if (this.verificarSeMensagemValida(mensagem)) {
         if (this.verificarSeMensagemDoUsuarioAlvo(mensagem)) {
-          mensagensEntrada = this.adicionarMensagemAlvoNoArrayMensagensEntrada(mensagensEntrada, mapMensagensPorId, mensagem);
-          grupoMensagens.push({ mensagensEntrada: mensagensEntrada, mensagemSaida: mensagem });
+          if (ultimoMensagemAdicionado == null) {
+            mensagensEntrada = this.adicionarMensagemAlvoNoArrayMensagensEntrada(mensagensEntrada, mapMensagensPorId, mensagem);
+            grupoMensagens.push({ mensagensEntrada: mensagensEntrada, mensagemSaida: mensagem });
+            ultimoMensagemAdicionado = mensagem;
+          } else {
+            ultimoMensagemAdicionado.texto += `\r\n${mensagem.texto}`;
+          }
+        } else {
+          ultimoMensagemAdicionado = null;
         }
         mapMensagensPorId[mensagem.id] = mensagem;
         mensagensEntrada = this.atualizarArrayMensagensEntrada(mensagensEntrada, mensagem);
       }
     }
+    this.removerMensagensEntradaMuitoGrande(mensagensEntrada);
     this.log('Grupo de mensagens extraido em:', new Date().getTime() - msInicio, 'ms');
     return grupoMensagens;
   }
 
+  removerMensagensEntradaMuitoGrande(mensagensEntrada) {
+    if (this.configuracoes.tamanhoMaxCaracteresMensagens) {
+      for (let i = mensagensEntrada.length - 1; i >= 0; i--) {
+        const mensagemEntrada = mensagensEntrada[i];
+        if (mensagemEntrada.texto.length > this.configuracoes.tamanhoMaxCaracteresMensagens) {
+          mensagensEntrada.splice(i, 1);
+        }
+      }
+    }
+  }
+
   verificarSeMensagemValida(mensagem) {
-    return mensagem.texto;
+    if (mensagem.texto) {
+      return (typeof mensagem.texto) === 'string';
+    }
+    return false;
   }
 
   verificarSeMensagemDoUsuarioAlvo(mensagem) {

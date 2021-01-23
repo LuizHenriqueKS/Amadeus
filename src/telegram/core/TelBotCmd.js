@@ -33,7 +33,7 @@ function getEndNameIndex(text) {
     return text.length;
   } else {
     const minIndex = validIndexes.reduce((a, b) => Math.min(a, b));
-    return minIndex;
+    return minIndex - 1;
   }
 }
 

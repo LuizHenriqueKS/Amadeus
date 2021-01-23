@@ -7,11 +7,28 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Amadeus",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${file}"
+      "program": "${file}",
+      "args": [
+        "./data/treinamento/Amadeus.json"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Walkker",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${file}",
+      "args": [
+        "./data/treinamento/Walkker.json"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

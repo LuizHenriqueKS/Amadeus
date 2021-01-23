@@ -4,7 +4,8 @@
   "description": "",
   "main": "treinar.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bot_walkker": "node ./exec/iniciarBotTelegram.js ./data/treinamento/Walkker.json"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
     "eslint-plugin-promise": "^4.2.1"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^2.8.4",
+    "@tensorflow/tfjs-node": "^2.8.4",
     "axios": "^0.21.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "readline-sync": "^1.4.10"
   }
 }
