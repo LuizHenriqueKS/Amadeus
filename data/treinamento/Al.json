@@ -1,10 +1,10 @@
 {
   "mensagens": "./../historico.json",
-  "idUsuario": 4396467379,
+  "idUsuario": 5009753622,
   "qtdeMaxMensagensEntrada": 5,
+  "tamanhoMaxCaracteresMensagens": 4096,
   "ia": {
-    "nomeModelo": "ModeloWalkker",
-    "tamanhoMaxCaracteresMensagens": 300,
+    "nomeModelo": "ModeloAl",
     "acelerador": true,
     "epocas": 10
   }

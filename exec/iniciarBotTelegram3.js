@@ -4,7 +4,7 @@ const path = require('path');
 const lerArquivoJson = require('../src/util/lerArquivoJson');
 const validarConfiguracoesTreinamento = require('../src/util/validarConfiguracoesTreinamento');
 const exibirMensagemErroException = require('../src/util/exibirMensagemErroException');
-const IA1 = require('../src/ia/IA1');
+const IA3 = require('../src/ia/IA3');
 
 require('dotenv').config();
 
@@ -37,7 +37,7 @@ async function pedirParaIAResponder(evt) {
     const configuracoes = lerArquivoJson(caminhoArquivoTreinamento);
     validarConfiguracoesTreinamento(configuracoes);
 
-    const ia = new IA1(configuracoes.ia);
+    const ia = new IA3(configuracoes.ia);
     await ia.carregarModelo();
 
     const mensagem = { dataHora: new Date(), idUsuario: evt.msg.from.id, texto: evt.msg.text };

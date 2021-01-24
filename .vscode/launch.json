@@ -29,6 +29,19 @@
         "./data/treinamento/Walkker.json"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Sir",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${file}",
+      "args": [
+        "./data/treinamento/Sir.json"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

@@ -2,7 +2,7 @@ const converterTextoParaBits = require('../util/converterTextoParaBits');
 const converterTextoParaAscii = require('../util/converterTextoParaAscii');
 const converterNumeroParaBytes = require('../util/converterNumeroParaBytes');
 
-class ConversorMensagem {
+class ConversorMensagem1 {
   converterArquivoParaDadosBrutos(arquivoMensagens, opcoes) {
     const entradas = [];
     const saidas = [];
@@ -66,4 +66,4 @@ class ConversorMensagem {
   }
 }
 
-module.exports = new ConversorMensagem();
+module.exports = new ConversorMensagem1();

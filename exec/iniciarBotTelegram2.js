@@ -4,11 +4,21 @@ const path = require('path');
 const lerArquivoJson = require('../src/util/lerArquivoJson');
 const validarConfiguracoesTreinamento = require('../src/util/validarConfiguracoesTreinamento');
 const exibirMensagemErroException = require('../src/util/exibirMensagemErroException');
-const IA1 = require('../src/ia/IA1');
+const IA2 = require('../src/ia/IA2');
+const LeitorArquivosMensagens = require('../src/mensagem/LeitorArquivosMensagens');
 
 require('dotenv').config();
 
 const contexto = [];
+
+const caminhoArquivoTreinamento = path.resolve(process.argv[2]);
+console.log('Arquivo de treinamento: ', caminhoArquivoTreinamento);
+
+const configuracoes = lerArquivoJson(caminhoArquivoTreinamento);
+validarConfiguracoesTreinamento(configuracoes);
+
+const caminhoArquivoMensagens = path.resolve(configuracoes.mensagens);
+const arquivoMensagens = new LeitorArquivosMensagens(configuracoes).ler(caminhoArquivoMensagens);
 
 async function main() {
   const bot = new TelBot(process.env.TELBOT_TOKEN);
@@ -33,11 +43,7 @@ async function main() {
 
 async function pedirParaIAResponder(evt) {
   try {
-    const caminhoArquivoTreinamento = path.resolve(process.argv[2]);
-    const configuracoes = lerArquivoJson(caminhoArquivoTreinamento);
-    validarConfiguracoesTreinamento(configuracoes);
-
-    const ia = new IA1(configuracoes.ia);
+    const ia = new IA2(configuracoes.ia);
     await ia.carregarModelo();
 
     const mensagem = { dataHora: new Date(), idUsuario: evt.msg.from.id, texto: evt.msg.text };
@@ -47,7 +53,7 @@ async function pedirParaIAResponder(evt) {
       contexto.splice(0, 1);
     }
 
-    const resposta = await ia.predizerMensagem(contexto);
+    const resposta = await ia.predizerMensagem(contexto, arquivoMensagens);
     await evt.replyMsg(resposta);
   } catch (e) {
     exibirMensagemErroException(e);

@@ -1,0 +1,11 @@
+{
+  "mensagens": "./../historico.json",
+  "idUsuario": 4703276732,
+  "qtdeMaxMensagensEntrada": 5,
+  "ia": {
+    "nomeModelo": "ModeloSir",
+    "acelerador": true,
+    "epocas": 10,
+    "tamanhoMaxCaracteresMensagens": 4096
+  }
+}

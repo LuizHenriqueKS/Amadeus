@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const tf = require('@tensorflow/tfjs');
-const converterBitsParaTexto = require('../util/converterBitsParaTexto');
-const conversorMensagem = require('../mensagem/conversorMensagem1');
+const conversorMensagem2 = require('../mensagem/conversorMensagem2');
 const ArquivoNaoEncontradoException = require('../exception/ArquivoNaoEncontradoException');
+const converterBitsParaNumero = require('../util/converterBitsParaNumero');
 
 module.exports = class IA1 {
   constructor(configuracoes) {
@@ -59,7 +59,6 @@ module.exports = class IA1 {
     this.rna.add(tf.layers.dense({ units: l2, inputShape: [l1], activation: 'sigmoid' }));
     // this.rna.add(tf.layers.dense({ units: l3, inputShape: [l2], activation: 'sigmoid' }));
     this.rna.add(tf.layers.dense({ units: this.quantidadeDadosSaida, inputShape: [l3], activation: 'sigmoid' }));
-
     this.compilarRNA();
   }
 
@@ -89,7 +88,7 @@ module.exports = class IA1 {
       if (!arquivoMensagens.verificarSeTemProximoGrupoMensagens()) {
         arquivoMensagens.irParaPrimeiraMensagem();
       }
-      const dadosBrutos = conversorMensagem.converterArquivoParaDadosBrutos(arquivoMensagens, this);
+      const dadosBrutos = conversorMensagem2.converterArquivoParaDadosBrutos(arquivoMensagens, this);
       const entradas = tf.tensor2d(dadosBrutos.entradas);
       const saidas = tf.tensor2d(dadosBrutos.saidas);
       const resultado = await this.rna.fit(entradas, saidas, { epochs: this.epocas });
@@ -102,11 +101,12 @@ module.exports = class IA1 {
     }
   }
 
-  async predizerMensagem(mensagensEntrada) {
-    const dadosBrutosEntrada = conversorMensagem.converterMensagensEntradaParaDadosBrutos(mensagensEntrada, this);
+  async predizerMensagem(mensagensEntrada, arquivoMensagens) {
+    const dadosBrutosEntrada = conversorMensagem2.converterMensagensEntradaParaDadosBrutos(mensagensEntrada, this);
     const entrada = tf.tensor2d([dadosBrutosEntrada]);
     const resultado = this.rna.predict(entrada).arraySync();
-    return converterBitsParaTexto(resultado[0]).trim();
+    const indice = converterBitsParaNumero(resultado[0]);
+    return arquivoMensagens.getGrupoMensagem(indice).mensagemSaida.texto;
   }
 
   requerArquivoExista(arquivo) {
@@ -142,15 +142,15 @@ module.exports = class IA1 {
   }
 
   get quantidadeDadosSaida() {
-    return this.modelo.nroMaximoCaracteresMensagensSaida * 16;
+    return 8 * 8;
   }
 
   get caminhoArquivoModelo() {
-    return path.join(__dirname, '../../data/modelos/', this.configuracoes.nomeModelo + '.json');
+    return path.join(__dirname, '../../data/modelos2/', this.configuracoes.nomeModelo + '.json');
   }
 
   get caminhoDiretorioRNA() {
-    return path.resolve(path.join('./data/modelos/', this.configuracoes.nomeModelo));
+    return path.resolve(path.join('./data/modelos2/', this.configuracoes.nomeModelo));
   }
 
   get epocas() {

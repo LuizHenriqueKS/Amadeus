@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const tf = require('@tensorflow/tfjs');
-const converterBitsParaTexto = require('../util/converterBitsParaTexto');
-const conversorMensagem = require('../mensagem/conversorMensagem1');
+const conversorMensagem3 = require('../mensagem/conversorMensagem3');
 const ArquivoNaoEncontradoException = require('../exception/ArquivoNaoEncontradoException');
+const converterBitsParaTexto = require('../util/converterBitsParaTexto');
 
 module.exports = class IA1 {
   constructor(configuracoes) {
@@ -12,6 +12,7 @@ module.exports = class IA1 {
     this.exibirLog = true;
     this.taxaAprendizagem = 0.001;
     this.quantidadeMaximaMensagensLerPorIteracao = 1000;
+    this.precisaoAceita = 0.997;
     if (configuracoes.acelerador) {
       require('@tensorflow/tfjs-node');
     }
@@ -51,15 +52,14 @@ module.exports = class IA1 {
   criarRNA() {
     this.rna = tf.sequential();
 
-    const l1 = Math.min(Math.ceil(this.quantidadeDadosEntrada / 2), 100);
-    const l2 = Math.min(Math.ceil(l1 / 2), 100);
-    const l3 = l2; // Math.min(Math.ceil(l2 / 2), 100);
+    const l1 = Math.max(Math.ceil(this.quantidadeDadosEntrada / 10), 100);
+    const l2 = Math.max(Math.ceil(l1 / 10), 100);
+    const l3 = l2;// Math.min(Math.ceil(l2 / 2), 100);
 
     this.rna.add(tf.layers.dense({ units: l1, inputShape: [this.quantidadeDadosEntrada], activation: 'sigmoid' }));
     this.rna.add(tf.layers.dense({ units: l2, inputShape: [l1], activation: 'sigmoid' }));
-    // this.rna.add(tf.layers.dense({ units: l3, inputShape: [l2], activation: 'sigmoid' }));
-    this.rna.add(tf.layers.dense({ units: this.quantidadeDadosSaida, inputShape: [l3], activation: 'sigmoid' }));
-
+    this.rna.add(tf.layers.dense({ units: l3, inputShape: [l2], activation: 'sigmoid' }));
+    this.rna.add(tf.layers.dense({ units: 2 * this.quantidadeBitsPorBytes, inputShape: [l3], activation: 'sigmoid' }));
     this.compilarRNA();
   }
 
@@ -85,28 +85,60 @@ module.exports = class IA1 {
   }
 
   async treinarSemParar(arquivoMensagens) {
-    while (true) {
-      if (!arquivoMensagens.verificarSeTemProximoGrupoMensagens()) {
-        arquivoMensagens.irParaPrimeiraMensagem();
-      }
-      const dadosBrutos = conversorMensagem.converterArquivoParaDadosBrutos(arquivoMensagens, this);
-      const entradas = tf.tensor2d(dadosBrutos.entradas);
-      const saidas = tf.tensor2d(dadosBrutos.saidas);
-      const resultado = await this.rna.fit(entradas, saidas, { epochs: this.epocas });
-      if (!this.configuracoes.acelerador) {
-        this.log(resultado);
-      }
-      if (this.salvarModeloAutomaticamente) {
-        await this.salvarModelo();
-      }
+    for (let i = 1; i < this.configuracoes.tamanhoMaxCaracteresMensagens; i++) {
+      const subArquivoMensagens = arquivoMensagens.getSubArquivoMensagens(i);
+      let precisao;
+      this.quantidadeDadosSaida = (i + 1) * 16;
+      this.aumentarTamanhoSaida(this.quantidadeDadosSaida);
+      this.log('Quantidade de caracteres de saída:', i);
+      this.log('Quantidade de mensagens a processar:', subArquivoMensagens.grupoMensagens.length);
+      do {
+        if (!subArquivoMensagens.verificarSeTemProximoGrupoMensagens()) {
+          subArquivoMensagens.irParaPrimeiraMensagem();
+        }
+        const dadosBrutos = conversorMensagem3.converterArquivoParaDadosBrutos(subArquivoMensagens, this);
+        const entradas = tf.tensor2d(dadosBrutos.entradas);
+        const saidas = tf.tensor2d(dadosBrutos.saidas);
+        const resultado = await this.rna.fit(entradas, saidas, { epochs: this.epocas });
+        precisao = resultado.history.acc[resultado.history.acc.length - 1];
+        if (this.salvarModeloAutomaticamente) {
+          await this.salvarModelo();
+        }
+      } while (precisao < this.precisaoAceita);
     }
   }
 
-  async predizerMensagem(mensagensEntrada) {
-    const dadosBrutosEntrada = conversorMensagem.converterMensagensEntradaParaDadosBrutos(mensagensEntrada, this);
+  async predizerMensagem(mensagensEntrada, arquivoMensagens) {
+    const dadosBrutosEntrada = conversorMensagem3.converterMensagensEntradaParaDadosBrutos(mensagensEntrada, this);
     const entrada = tf.tensor2d([dadosBrutosEntrada]);
     const resultado = this.rna.predict(entrada).arraySync();
     return converterBitsParaTexto(resultado[0]).trim();
+  }
+
+  aumentarTamanhoSaida(quantidadeDadosSaida) {
+    const camadaSaida = this.rna.layers[this.rna.layers.length - 1];
+    const quantidadeDadosEntrada = camadaSaida.weights[0].shape[0];
+    const quantidadeDadosSaidaOriginal = camadaSaida.weights[0].shape[1];
+    if (quantidadeDadosSaidaOriginal < quantidadeDadosSaida) {
+      this.log(`Aumentando o tamanho de sáida de ${quantidadeDadosSaidaOriginal} para ${quantidadeDadosSaida}`);
+      this.rna.pop();
+      this.rna.add(tf.layers.dense({ units: quantidadeDadosSaida, inputShape: [quantidadeDadosEntrada], activation: 'sigmoid', name: `dense_${Math.random()}` }));
+      this.compilarRNA();
+      const novaCamadaSaida = this.rna.layers[this.rna.layers.length - 1];
+      this.copiarPesos(camadaSaida, novaCamadaSaida);
+    }
+  }
+
+  copiarPesos(camadaOrigem, camadaAlvo) {
+    const pesosOrigem = camadaOrigem.weights[0].val.arraySync();
+    const pesosAlvo = camadaAlvo.weights[0].val.arraySync();
+    for (let x = 0; x < pesosOrigem.length; x++) {
+      for (let y = 0; y < pesosOrigem[x].length; y++) {
+        pesosAlvo[x][y] = pesosOrigem[x][y];
+      }
+    }
+    const val = tf.variable(tf.tensor2d(pesosAlvo));
+    camadaAlvo.weights[0].val.assign(val);
   }
 
   requerArquivoExista(arquivo) {
@@ -141,16 +173,16 @@ module.exports = class IA1 {
     return 8;
   }
 
-  get quantidadeDadosSaida() {
-    return this.modelo.nroMaximoCaracteresMensagensSaida * 16;
+  get quantidadeBitsPorBytes() {
+    return 16;
   }
 
   get caminhoArquivoModelo() {
-    return path.join(__dirname, '../../data/modelos/', this.configuracoes.nomeModelo + '.json');
+    return path.join(__dirname, '../../data/modelos3/', this.configuracoes.nomeModelo + '.json');
   }
 
   get caminhoDiretorioRNA() {
-    return path.resolve(path.join('./data/modelos/', this.configuracoes.nomeModelo));
+    return path.resolve(path.join('./data/modelos3/', this.configuracoes.nomeModelo));
   }
 
   get epocas() {

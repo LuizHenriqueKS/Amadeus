@@ -46,17 +46,25 @@ class LeitorArquivosMensagens {
         mensagensEntrada = this.atualizarArrayMensagensEntrada(mensagensEntrada, mensagem);
       }
     }
-    this.removerMensagensEntradaMuitoGrande(mensagensEntrada);
+    this.removerMensagensEntradaMuitoGrande(grupoMensagens);
+    this.preencherIdMensagensSaida(grupoMensagens);
     this.log('Grupo de mensagens extraido em:', new Date().getTime() - msInicio, 'ms');
     return grupoMensagens;
   }
 
-  removerMensagensEntradaMuitoGrande(mensagensEntrada) {
+  preencherIdMensagensSaida(grupoMensagens) {
+    for (let i = 0; i < grupoMensagens.length; i++) {
+      const grupoMensagem = grupoMensagens[i];
+      grupoMensagem.mensagemSaida.id = i + 1;
+    }
+  }
+
+  removerMensagensEntradaMuitoGrande(grupoMensagens) {
     if (this.configuracoes.tamanhoMaxCaracteresMensagens) {
-      for (let i = mensagensEntrada.length - 1; i >= 0; i--) {
-        const mensagemEntrada = mensagensEntrada[i];
-        if (mensagemEntrada.texto.length > this.configuracoes.tamanhoMaxCaracteresMensagens) {
-          mensagensEntrada.splice(i, 1);
+      for (let i = grupoMensagens.length - 1; i >= 0; i--) {
+        const grupoMensagem = grupoMensagens[i];
+        if (grupoMensagem.mensagemSaida.texto.length > this.configuracoes.tamanhoMaxCaracteresMensagens) {
+          grupoMensagens.splice(i, 1);
         }
       }
     }

@@ -5,7 +5,18 @@
   "main": "treinar.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bot_walkker": "node ./exec/iniciarBotTelegram.js ./data/treinamento/Walkker.json"
+    "bot_walkker": "node ./exec/iniciarBotTelegram.js ./data/treinamento/Walkker.json",
+    "bot_sir": "node ./exec/iniciarBotTelegram.js ./data/treinamento/Sir.json",
+    "bot_walkker2": "node ./exec/iniciarBotTelegram2.js ./data/treinamento/Walkker.json",
+    "bot_sir2": "node ./exec/iniciarBotTelegram2.js ./data/treinamento/Sir.json",
+    "treinar_walkker": "node ./exec/treinar1.js ./data/treinamento/Walkker.json",
+    "treinar_sir": "node ./exec/treinar1.js ./data/treinamento/Sir.json",
+    "treinar_walkker2": "node ./exec/treinar2.js ./data/treinamento/Walkker.json",
+    "treinar_sir2": "node ./exec/treinar2.js ./data/treinamento/Sir.json",
+    "bot_al2": "node ./exec/iniciarBotTelegram2.js ./data/treinamento/Al.json",
+    "treinar_al2": "node ./exec/treinar2.js ./data/treinamento/Al.json",
+    "treinar_walkker3": "node ./exec/treinar3.js ./data/treinamento/Walkker.json",
+    "bot_walkker3": "node ./exec/iniciarBotTelegram3.js ./data/treinamento/Walkker.json"
   },
   "repository": {
     "type": "git",
