@@ -16,7 +16,9 @@
     "bot_al2": "node ./exec/iniciarBotTelegram2.js ./data/treinamento/Al.json",
     "treinar_al2": "node ./exec/treinar2.js ./data/treinamento/Al.json",
     "treinar_walkker3": "node ./exec/treinar3.js ./data/treinamento/Walkker.json",
-    "bot_walkker3": "node ./exec/iniciarBotTelegram3.js ./data/treinamento/Walkker.json"
+    "bot_walkker3": "node ./exec/iniciarBotTelegram3.js ./data/treinamento/Walkker.json",
+    "treinar_todos3": "node ./exec/treinar3.js ./data/treinamento/Todos.json",
+    "bot_todos3": "node ./exec/iniciarBotTelegram3.js ./data/treinamento/Todos.json"
   },
   "repository": {
     "type": "git",
@@ -38,6 +40,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^2.8.4",
     "@tensorflow/tfjs-node": "^2.8.4",
+    "@tensorflow/tfjs-node-gpu": "^2.8.5",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "readline-sync": "^1.4.10"

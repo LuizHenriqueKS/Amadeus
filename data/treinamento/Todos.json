@@ -1,0 +1,13 @@
+{
+  "mensagens": "./../historico.json",
+  "idUsuario": 0,
+  "qtdeMaxMensagensEntrada": 3,
+  "ia": {
+    "nomeModelo": "ModeloTodos",
+    "acelerador": "gpu",
+    "agruparMensagens": true,
+    "epocas": 10,
+    "tamanhoMaxCaracteresMensagens": 4096,
+    "precisaoAceita": 0.99
+  }
+}

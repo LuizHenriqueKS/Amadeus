@@ -42,6 +42,19 @@
         "./data/treinamento/Sir.json"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Todos",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${file}",
+      "args": [
+        "./data/treinamento/Todos.json"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

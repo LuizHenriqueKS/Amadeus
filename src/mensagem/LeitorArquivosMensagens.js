@@ -35,7 +35,7 @@ class LeitorArquivosMensagens {
           if (ultimoMensagemAdicionado == null) {
             mensagensEntrada = this.adicionarMensagemAlvoNoArrayMensagensEntrada(mensagensEntrada, mapMensagensPorId, mensagem);
             grupoMensagens.push({ mensagensEntrada: mensagensEntrada, mensagemSaida: mensagem });
-            ultimoMensagemAdicionado = mensagem;
+            if (this.configuracoes.agruparMensagens) ultimoMensagemAdicionado = mensagem;
           } else {
             ultimoMensagemAdicionado.texto += `\r\n${mensagem.texto}`;
           }
@@ -78,7 +78,7 @@ class LeitorArquivosMensagens {
   }
 
   verificarSeMensagemDoUsuarioAlvo(mensagem) {
-    return mensagem.idUsuario === this.configuracoes.idUsuario;
+    return mensagem.idUsuario === this.configuracoes.idUsuario || this.configuracoes.idUsuario === 0;
   }
 
   atualizarArrayMensagensEntrada(mensagensEntrada, mensagem) {

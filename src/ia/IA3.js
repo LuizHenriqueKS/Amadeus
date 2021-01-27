@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node-gpu');
 const conversorMensagem3 = require('../mensagem/conversorMensagem3');
 const ArquivoNaoEncontradoException = require('../exception/ArquivoNaoEncontradoException');
 const converterBitsParaTexto = require('../util/converterBitsParaTexto');
@@ -12,9 +12,14 @@ module.exports = class IA1 {
     this.exibirLog = true;
     this.taxaAprendizagem = 0.001;
     this.quantidadeMaximaMensagensLerPorIteracao = 1000;
-    this.precisaoAceita = 0.997;
+    this.precisaoAceita = this.configuracoes.precisaoAceita || 0.997;
     if (configuracoes.acelerador) {
-      require('@tensorflow/tfjs-node');
+      if (configuracoes.acelerador === 'cpu') {
+        require('@tensorflow/tfjs-node');
+      }
+      if (configuracoes.acelerador === 'gpu') {
+        require('@tensorflow/tfjs-node-gpu');
+      }
     }
   }
 
